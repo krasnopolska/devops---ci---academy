@@ -5,6 +5,19 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
-    - run: echo 'The PR was merged'
+      - name: Clone project
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Download Dependencies
+        run: mvn -B dependency:go-offline #download dependencies
+      - name: Create Build
+        run: mvn -B -ntp package -DskipTests #create build
+      - name: Run test #run unit tests
+        run: mvn -B test
